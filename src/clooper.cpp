@@ -46,7 +46,7 @@ void indent2(VectorIter current, VectorIter end, vector<pair<int,int> > *flatten
 	}
 
 
-	cout << current->getId() << " parent: " << indenLevel << endl;
+	cout << current->getId() << " indetionlevel: " << indenLevel << endl;
 	flattenedData->push_back(pair<int,int>(current->getId(), indenLevel));
 
 	indent2(current->getChilds().begin(), current->getChilds().end(), flattenedData, indenLevel + 1);
