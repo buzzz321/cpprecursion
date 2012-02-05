@@ -13,7 +13,7 @@
 
 #include "Layout.h"
 
-typedef std::vector<Layout>::iterator VectorIter;
+typedef std::vector<std::pair<int,int> > VectorPair;
 
 using namespace std;
 
@@ -25,7 +25,7 @@ void removeVectorItem(vector<Layout> & data)
     data.erase(newEnd, data.end());
 }
 
-void indent(vector<Layout> data, vector<pair<int,int> > *flattenedData, int indenLevel){
+void indent(vector<Layout> data, VectorPair *flattenedData, int indenLevel){
 	if (data.empty()){
 		return;
 	}
@@ -40,20 +40,16 @@ void indent(vector<Layout> data, vector<pair<int,int> > *flattenedData, int inde
 	indent(data, flattenedData, indenLevel);
 }
 
-void indent2(VectorIter current, VectorIter end, vector<pair<int,int> > *flattenedData, int indenLevel){
-	if (current == end){
+void indent2(const vector<Layout> &data, unsigned int pos, int indenLevel, VectorPair *flattenedData){
+	if (  pos == data.size() ){
 		return;
 	}
 
+	//cout << data[pos].getId() << " indent level: " << indenLevel << endl;
+	flattenedData->push_back(pair<int,int>(data[pos].getId(), indenLevel));
 
-	cout << current->getId() << " indetionlevel: " << indenLevel << endl;
-	flattenedData->push_back(pair<int,int>(current->getId(), indenLevel));
-
-	indent2(current->getChilds().begin(), current->getChilds().end(), flattenedData, indenLevel + 1);
-
-	//Find new end iterator
-    ++current;
-	indent2(current, end, flattenedData, indenLevel);
+	indent2(data[pos].getChilds(), 0, indenLevel + 1, flattenedData);
+	indent2(data, pos + 1 , indenLevel, flattenedData);
 }
 
 int main() {
@@ -75,12 +71,12 @@ int main() {
 	X.addChild(B);
 
 	vector<Layout> data;
-	vector<pair<int,int> > flatter;
+	VectorPair flatter;
 
 	data.push_back(X);
 
 	//indent(data, &flatter, 0);
-	indent2(data.begin(), data.end(), &flatter, 0);
+	indent2(data, 0, 0, &flatter);
 
 	for(vector<pair<int,int> >::iterator iter = flatter.begin(); iter < flatter.end(); ++iter) {
 		cout<<"id["<<iter->first<<"]="<<iter->second<<endl;
