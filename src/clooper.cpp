@@ -13,6 +13,8 @@
 
 #include "Layout.h"
 
+typedef std::vector<Layout>::iterator VectorIter;
+
 using namespace std;
 
 void removeVectorItem(vector<Layout> & data)
@@ -38,6 +40,22 @@ void indent(vector<Layout> data, vector<pair<int,int> > *flattenedData, int inde
 	indent(data, flattenedData, indenLevel);
 }
 
+void indent2(VectorIter current, VectorIter end, vector<pair<int,int> > *flattenedData, int indenLevel){
+	if (current == end){
+		return;
+	}
+
+
+	cout << current->getId() << " parent: " << indenLevel << endl;
+	flattenedData->push_back(pair<int,int>(current->getId(), indenLevel));
+
+	indent2(current->getChilds().begin(), current->getChilds().end(), flattenedData, indenLevel + 1);
+
+	//Find new end iterator
+    ++current;
+	indent2(current, end, flattenedData, indenLevel);
+}
+
 int main() {
 	Layout X(0,0);
 
@@ -61,7 +79,8 @@ int main() {
 
 	data.push_back(X);
 
-	indent(data, &flatter, 0);
+	//indent(data, &flatter, 0);
+	indent2(data.begin(), data.end(), &flatter, 0);
 
 	for(vector<pair<int,int> >::iterator iter = flatter.begin(); iter < flatter.end(); ++iter) {
 		cout<<"id["<<iter->first<<"]="<<iter->second<<endl;
